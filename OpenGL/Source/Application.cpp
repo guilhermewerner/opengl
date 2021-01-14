@@ -2,6 +2,24 @@
 #include <GLFW/glfw3.h>
 
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+
+static std::string ParseShader(const std::string filePath)
+{
+    std::ifstream stream(filePath);
+
+    std::string line;
+    std::stringstream ss;
+
+    while (getline(stream, line))
+    {
+        ss << line << "\n";
+    }
+
+    return ss.str();
+}
 
 static unsigned int CompileShader(unsigned int type, const std::string &source)
 {
@@ -92,25 +110,13 @@ int main()
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
     glEnableVertexAttribArray(0);
 
-    std::string vertexShader =
-        "#version 330 core\n"
-        "\n"
-        "layout(location = 0) in vec4 position;\n"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "   gl_Position = position;\n"
-        "}\n";
+    std::string vertexShader = ParseShader("Shaders/Vertex.glsl");
+    std::cout << "VERTEX:" << std::endl;
+    std::cout << vertexShader << std::endl;
 
-    std::string fragmentShader =
-        "#version 330 core\n"
-        "\n"
-        "layout(location = 0) out vec4 color;\n"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "   color = vec4(0.0, 1.0, 0.0, 1.0);\n"
-        "}\n";
+    std::string fragmentShader = ParseShader("Shaders/Fragment.glsl");
+    std::cout << "FRAGMENT:" << std::endl;
+    std::cout << fragmentShader << std::endl;
 
     unsigned int shader = CreateShader(vertexShader, fragmentShader);
 
