@@ -6,12 +6,14 @@
 #include <string>
 #include <sstream>
 
-static std::string ParseShader(const std::string filePath)
-{
-    std::ifstream stream(filePath);
+using namespace std;
 
-    std::string line;
-    std::stringstream ss;
+static string ParseShader(const string filePath)
+{
+    ifstream stream(filePath);
+
+    string line;
+    stringstream ss;
 
     while (getline(stream, line))
     {
@@ -21,7 +23,7 @@ static std::string ParseShader(const std::string filePath)
     return ss.str();
 }
 
-static unsigned int CompileShader(unsigned int type, const std::string &source)
+static unsigned int CompileShader(unsigned int type, const string &source)
 {
     unsigned int id = glCreateShader(type);
     const char *src = source.c_str();
@@ -37,12 +39,12 @@ static unsigned int CompileShader(unsigned int type, const std::string &source)
         int lenght;
         glGetShaderiv(id, GL_INFO_LOG_LENGTH, &lenght);
 
-        char *message = (char *)alloca(lenght + sizeof(char));
+        char *message = (char *)malloc(lenght + sizeof(char));
 
         glGetShaderInfoLog(id, lenght, &lenght, message);
 
-        std::cout << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << std::endl;
-        std::cout << message << std::endl;
+        cout << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << endl;
+        cout << message << endl;
 
         glDeleteShader(id);
 
@@ -52,7 +54,7 @@ static unsigned int CompileShader(unsigned int type, const std::string &source)
     return id;
 }
 
-static unsigned int CreateShader(const std::string &vertexShader, const std::string &fragmentShader)
+static unsigned int CreateShader(const string &vertexShader, const string &fragmentShader)
 {
     unsigned int program = glCreateProgram();
 
@@ -92,10 +94,10 @@ int main()
 
     if (glewInit() != GLEW_OK)
     {
-        std::cout << "Error!" << std::endl;
+        cout << "Error!" << endl;
     }
 
-    std::cout << glGetString(GL_VERSION) << std::endl;
+    cout << glGetString(GL_VERSION) << endl;
 
     float positions[6] = {
         -0.5f, -0.5f,
@@ -110,13 +112,13 @@ int main()
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
     glEnableVertexAttribArray(0);
 
-    std::string vertexShader = ParseShader("Shaders/Vertex.glsl");
-    std::cout << "VERTEX:" << std::endl;
-    std::cout << vertexShader << std::endl;
+    string vertexShader = ParseShader("Shaders/Vertex.glsl");
+    cout << "VERTEX:" << endl;
+    cout << vertexShader << endl;
 
-    std::string fragmentShader = ParseShader("Shaders/Fragment.glsl");
-    std::cout << "FRAGMENT:" << std::endl;
-    std::cout << fragmentShader << std::endl;
+    string fragmentShader = ParseShader("Shaders/Fragment.glsl");
+    cout << "FRAGMENT:" << endl;
+    cout << fragmentShader << endl;
 
     unsigned int shader = CreateShader(vertexShader, fragmentShader);
 
